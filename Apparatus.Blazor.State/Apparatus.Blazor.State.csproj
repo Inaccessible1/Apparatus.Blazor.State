@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PackageId>Apparatus.Blazor.State</PackageId>
+		<PackageVersion></PackageVersion>
+		<Authors>Apparatus</Authors>
+		<Description>Apparatus.Blazor.State .NET package</Description>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<!--<PackageReleaseNotes>First release</PackageReleaseNotes>-->
+		<Copyright>Copyright $([System.DateTime]::Now.ToString("yyyy")). All rights reserved.</Copyright>
+		<PackageTags>Apparatus Apparatus.Blazor.State Blazor</PackageTags>
+		<ApplicationIcon>./State.ico</ApplicationIcon>
+		<StartupObject />
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+	</ItemGroup>
+
+</Project>
