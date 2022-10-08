@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Apparatus.Blazor.State\Apparatus.Blazor.State.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Actions\" />
-  </ItemGroup>
-
 </Project>

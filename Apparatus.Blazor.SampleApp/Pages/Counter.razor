@@ -1,4 +1,5 @@
 ﻿@page "/counter"
+@using Apparatus.Blazor.SampleApp.Actions
 @using Apparatus.Blazor.SampleApp.States
 @using Apparatus.Blazor.State
 @using Apparatus.Blazor.State.Contracts
@@ -20,10 +21,8 @@
 
     [Inject] IActionDispatcher Dispatcher { get; set; }
 
-    private int currentCount = 0;
-
     private void IncrementCount()
     {
-        currentCount++;
+        Dispatcher.Dispatch(new IncrementCount { });
     }
 }
