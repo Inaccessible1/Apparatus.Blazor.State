@@ -10,18 +10,26 @@
 		<PackageVersion></PackageVersion>
 		<Authors>Apparatus</Authors>
 		<Description>Apparatus.Blazor.State .NET package</Description>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<!--<PackageReleaseNotes>First release</PackageReleaseNotes>-->
 		<Copyright>Copyright $([System.DateTime]::Now.ToString("yyyy")). All rights reserved.</Copyright>
 		<PackageTags>Apparatus Apparatus.Blazor.State Blazor</PackageTags>
-		<ApplicationIcon>./State.ico</ApplicationIcon>
+		<!--<ApplicationIcon>icon.png</ApplicationIcon>-->
 		<StartupObject />
+		<PackageIcon>icon.png</PackageIcon>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.9" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 </Project>
