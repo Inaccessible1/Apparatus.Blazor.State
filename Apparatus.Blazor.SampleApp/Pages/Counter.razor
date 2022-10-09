@@ -1,0 +1,28 @@
+﻿@page "/counter"
+@using Apparatus.Blazor.SampleApp.Actions
+@using Apparatus.Blazor.SampleApp.States
+@using Apparatus.Blazor.State
+@using Apparatus.Blazor.State.Contracts
+@inherits BlazorStateComponent
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @State.CurrentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+
+
+@code {
+
+    CounterState State => GetState<CounterState>();
+
+    [Inject] IActionDispatcher Dispatcher { get; set; }
+
+    private void IncrementCount()
+    {
+        Dispatcher.Dispatch(new IncrementCount { });
+    }
+}

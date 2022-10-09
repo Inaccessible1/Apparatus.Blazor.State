@@ -31,7 +31,7 @@ namespace Apparatus.Blazor.State
             return services.AddServicesByMarkerInterface<TMarker>(typeof(TMarker).Assembly);
         }
 
-        public static IServiceCollection AddApparatusStateManagement(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly assembly)
         {
             services.AddGenericTypeServices(assembly, typeof(IActionHandler<>));
             services.AddServicesByMarkerInterface<IState>(assembly);

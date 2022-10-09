@@ -1,0 +1,66 @@
+﻿@page "/fetchdata"
+@using Apparatus.Blazor.SampleApp.Actions
+@using Apparatus.Blazor.SampleApp.States
+@using Apparatus.Blazor.State
+@using Apparatus.Blazor.State.Contracts
+@inherits BlazorStateComponent
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+
+
+@if (State.Loading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    if (State.Forecasts.Any())
+    {
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Temp. (C)</th>
+                    <th>Temp. (F)</th>
+                    <th>Summary</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var forecast in State.Forecasts)
+                {
+                    <tr>
+                        <td>@forecast.Date.ToShortDateString()</td>
+                        <td>@forecast.TemperatureC</td>
+                        <td>@forecast.TemperatureF</td>
+                        <td>@forecast.Summary</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p><em>No data to display.</em></p>
+    }
+}
+
+@code {
+
+    WeatherForecastTableState State => GetState<WeatherForecastTableState>();
+
+    [Inject] IActionDispatcher Dispatcher { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(!State.Initialized)
+        {
+            await Dispatcher.Dispatch(new LoadWeatherForecast());
+        }
+    }
+}
