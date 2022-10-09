@@ -19,6 +19,11 @@ namespace Apparatus.Blazor.SampleApp.Handlers
 
             newState.CurrentCount++;
 
+            /*
+             or use action property for increment value
+             newState.CurrentCount = newState.CurrentCount + action.IncrementBy;
+             */
+
             return _counterStore.SetState(newState);
         }
     }
