@@ -77,6 +77,6 @@ __7. Implement Action Handler__
 
 ```
 
-In this way you can keep your states segregated from logic from and components/pages.
+In this way you can keep your states separated from logic and components/pages.
 For more complex use cases please check SampleApp available in the repository. 
 
