@@ -17,12 +17,12 @@
 
 @code {
 
-    CounterState State => GetState<CounterState>();
+    CounterState State => GetState<CounterState>(); //State has to be accessed via GetState<T>() method, as this will also subscribe current component for re-rendering in case of any state updates.
 
     [Inject] IActionDispatcher Dispatcher { get; set; }
 
     private void IncrementCount()
     {
-        Dispatcher.Dispatch(new IncrementCount { });
+        Dispatcher.Dispatch(new IncrementCount { /*IncrementBy = 2*/ });
     }
 }

@@ -19,7 +19,12 @@ namespace Apparatus.Blazor.SampleApp.Handlers
 
             newState.CurrentCount++;
 
-            return _counterStore.SetState(newState);
+            /*
+             or use action property for increment value
+             newState.CurrentCount = newState.CurrentCount + action.IncrementBy;
+             */
+
+            return _counterStore.SetState(newState); //SetState will set new state and trigger re-rendering of all blazor components which are accessing CounterState via GetState<CounterState>() method.
         }
     }
 }
