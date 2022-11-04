@@ -33,7 +33,7 @@ __5. Create `IncrementCount.cs` action in "Actions" folder - all actions should 
         public int IncrementBy { get; set; }
     }
 ```
-__6. Inherit BlazorStateComponent in `Counter.razor` page/component, reference `CounterState` in the component and implement Action Dispacher:__
+__6. Inherit BlazorStateComponent in `Counter.razor` page/component, reference `CounterState` in the component and implement Action Dispatcher:__
 ```
 	@inherits Apparatus.Blazor.State.BlazorStateComponent
 ```	
