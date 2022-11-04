@@ -12,7 +12,9 @@
 		<Description>Apparatus.Blazor.State .NET package</Description>
 		<!--<PackageReleaseNotes>First release</PackageReleaseNotes>-->
 		<Copyright>Copyright $([System.DateTime]::Now.ToString("yyyy")). All rights reserved.</Copyright>
-		<PackageTags>Apparatus Apparatus.Blazor.State Blazor</PackageTags>
+		<PackageTags>
+			Apparatus Apparatus.Blazor.State Blazor Webassembly State-Management Blazor-Webassembly dotnet asp-net-core
+		</PackageTags>
 		<!--<ApplicationIcon>icon.png</ApplicationIcon>-->
 		<StartupObject />
 		<PackageIcon>icon.png</PackageIcon>
