@@ -8,10 +8,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
      <icon>icon.png</icon> 
-    <!--<projectUrl>http://project_url_here_or_delete_this_line/</projectUrl>-->
+    <projectUrl>https://github.com/Inaccessible1</projectUrl>
     <description>$description$</description>
     <releaseNotes></releaseNotes>
     <copyright>$copyright$</copyright>
-    <tags>Apparatus Blazor State Apparatus.Blazor.State</tags>
+    <tags>Apparatus Apparatus.Blazor.State Blazor Webassembly State-Management Blazor-Webassembly dotnet asp-net-core</tags>
   </metadata>
 </package>
