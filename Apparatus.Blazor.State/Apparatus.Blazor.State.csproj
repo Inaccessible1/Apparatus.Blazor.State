@@ -9,19 +9,31 @@
 		<PackageId>Apparatus.Blazor.State</PackageId>
 		<PackageVersion></PackageVersion>
 		<Authors>Apparatus</Authors>
-		<Description>Apparatus.Blazor.State .NET package</Description>
+		<Description>Apparatus.Blazor.State is library which provides centralized state management for Blazor webassembly based implementations. </Description>
 		<!--<PackageReleaseNotes>First release</PackageReleaseNotes>-->
 		<Copyright>Copyright $([System.DateTime]::Now.ToString("yyyy")). All rights reserved.</Copyright>
-		<PackageTags>Apparatus Apparatus.Blazor.State Blazor</PackageTags>
+		<PackageTags>Apparatus Apparatus.Blazor.State Blazor Webassembly State-Management Blazor-Webassembly dotnet asp-net-core</PackageTags>
 		<!--<ApplicationIcon>icon.png</ApplicationIcon>-->
 		<StartupObject />
 		<PackageIcon>icon.png</PackageIcon>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageProjectUrl>https://github.com/Inaccessible1/Apparatus.Blazor.State</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Inaccessible1/Apparatus.Blazor.State.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.9" />
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.10" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 	</ItemGroup>
 

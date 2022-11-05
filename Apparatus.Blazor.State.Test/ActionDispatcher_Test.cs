@@ -46,7 +46,7 @@ namespace Apparatus.Blazor.State.Test
 
             mockServiceProvider
                 .Setup(mock => mock.GetService(typeof(IActionHandler<MyAction>)))
-                .Returns(mockActionHandler.Object);
+                .Returns((object)mockActionHandler.Object);
 
             //Act
             var dispatcher = new ActionDispatcher(mockServiceProvider.Object, mockActionSubscriber.Object);
