@@ -18,8 +18,8 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageProjectUrl>https://github.com/Inaccessible1</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/Inaccessible1.git</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/Inaccessible1/Apparatus.Blazor.State</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Inaccessible1/Apparatus.Blazor.State.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 

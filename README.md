@@ -78,5 +78,5 @@ __7. Implement Action Handler__
 ```
 
 In this way you can keep your states separated from logic and components/pages.
-For more complex use cases please check SampleApp available in the repository. 
+For more complex use cases please check SampleApp available in the [repository](https://github.com/Inaccessible1/Apparatus.Blazor.State). 
 

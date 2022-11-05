@@ -8,7 +8,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
      <icon>icon.png</icon> 
-    <projectUrl>https://github.com/Inaccessible1</projectUrl>
+    <projectUrl>https://github.com/Inaccessible1/Apparatus.Blazor.State</projectUrl>
     <description>$description$</description>
     <releaseNotes></releaseNotes>
     <copyright>$copyright$</copyright>
