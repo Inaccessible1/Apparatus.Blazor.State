@@ -2,10 +2,12 @@
 
 using Apparatus.Blazor.State.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Apparatus.Blazor.State
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtension
     {
         private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] asssemblies)
@@ -26,10 +28,10 @@ namespace Apparatus.Blazor.State
             return services.AddServicesByMarkerInterface<TMarker>(new Assembly[] { asssembly });
         }
 
-        private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services)
-        {
-            return services.AddServicesByMarkerInterface<TMarker>(typeof(TMarker).Assembly);
-        }
+        //private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services)
+        //{
+        //    return services.AddServicesByMarkerInterface<TMarker>(typeof(TMarker).Assembly);
+        //}
 
         public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly assembly)
         {
