@@ -2,7 +2,8 @@ Apparatus.Blazor.State
 =========
 Apparatus.Blazor.State is library which provides centralized state management for Blazor webassembly based implementations.
 
-[![Build Status](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_apis/build/status/Apparatus.Blazor.State-ASP.NET%20Core-CI?branchName=master)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/latest?definitionId=19&branchName=master)
+[![Build Status](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_apis/build/status/Apparatus.Blazor.State-ASP.NET%20Core-CI?branchName=master)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/latest?definitionId=19&branchName=master)  ![Azure DevOps tests](https://img.shields.io/azure-devops/tests/Perpetuum-mobile/Apparatus.Blazor.State/19?compact_message&failed_label=failed&passed_label=passed&skipped_label=skipped) ![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/Perpetuum-mobile/Apparatus.Blazor.State/19)
+
 
 # Getting Started #
 

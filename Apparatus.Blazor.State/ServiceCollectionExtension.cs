@@ -26,10 +26,10 @@ namespace Apparatus.Blazor.State
             return services.AddServicesByMarkerInterface<TMarker>(new Assembly[] { asssembly });
         }
 
-        private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services)
-        {
-            return services.AddServicesByMarkerInterface<TMarker>(typeof(TMarker).Assembly);
-        }
+        //private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services)
+        //{
+        //    return services.AddServicesByMarkerInterface<TMarker>(typeof(TMarker).Assembly);
+        //}
 
         public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly assembly)
         {
