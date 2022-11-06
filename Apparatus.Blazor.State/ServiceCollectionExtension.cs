@@ -2,10 +2,12 @@
 
 using Apparatus.Blazor.State.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Apparatus.Blazor.State
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtension
     {
         private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] asssemblies)
