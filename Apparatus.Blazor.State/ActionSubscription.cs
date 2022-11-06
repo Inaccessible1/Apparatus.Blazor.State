@@ -13,7 +13,7 @@ namespace Apparatus.Blazor.State
 
         public string Id { get; }
 
-        internal Type ActionType { get; }
+        public Type ActionType { get; }
 
         public ActionSubscription(Type actionType, Action<TAction> delegete, string id)
         {
