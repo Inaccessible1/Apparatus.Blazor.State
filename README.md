@@ -78,5 +78,19 @@ __7. Implement Action Handler__
 ```
 
 In this way you can keep your states separated from logic and components/pages.
+
+# Subscribe to Action without creating Handler #
+
+Subscribe from Blazor component.
+```	
+ @code {
+   [Inject] IActionSubscriber ActionSubscriber { get; set; }
+	ActionSubscriber.Subscribe<MyAction>((action) => { ... });
+ }
+
+```	
+
+
 For more complex use cases please check SampleApp available in the [repository](https://github.com/Inaccessible1/Apparatus.Blazor.State). 
+
 
