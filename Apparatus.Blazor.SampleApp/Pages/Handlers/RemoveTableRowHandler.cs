@@ -1,12 +1,12 @@
-﻿using Apparatus.Blazor.SampleApp.Actions;
+﻿using Apparatus.Blazor.SampleApp.Pages.Actions;
 using Apparatus.Blazor.SampleApp.States;
 using Apparatus.Blazor.State.Contracts;
 
-namespace Apparatus.Blazor.SampleApp.Handlers
+namespace Apparatus.Blazor.SampleApp.Pages.Handlers
 {
     public class RemoveTableRowHandler : IActionHandler<RemoveTableRow>
     {
-        private IStore<WeatherForecastTableState> _tableStore; 
+        private IStore<WeatherForecastTableState> _tableStore;
 
         public RemoveTableRowHandler(IStore<WeatherForecastTableState> tableStore)
         {
