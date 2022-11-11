@@ -1,0 +1,30 @@
+﻿@using Apparatus.Blazor.State;
+
+@inherits BlazorStateComponent
+
+
+
+<div class="modal fade @(State.Display ? "show" : "")" tabindex="-1" style="@(State.Display ? "display : block;" : "")">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation!</h5>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="Hide"></button>
+            </div>
+            <div class="modal-body">
+                <p>@State.Content</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" @onclick="Hide">Close</button>
+                <button type="button" class="btn btn-sm btn-primary" @onclick="OnConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@if (State.Display)
+{
+    <div class="offcanvas-backdrop fade show"></div>
+}

@@ -2,7 +2,7 @@ Apparatus.Blazor.State
 =========
 Apparatus.Blazor.State is library which provides centralized state management for Blazor webassembly based implementations.
 
-[![Build Status](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_apis/build/status/Apparatus.Blazor.State-ASP.NET%20Core-CI?branchName=master)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/latest?definitionId=19&branchName=master)  [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/Perpetuum-mobile/Apparatus.Blazor.State/19?compact_message&failed_label=failed&passed_label=passed&skipped_label=skipped)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/results?buildId=763&view=ms.vss-test-web.build-test-results-tab) [![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/Perpetuum-mobile/Apparatus.Blazor.State/19)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/results?buildId=763&view=codecoverage-tab)
+[![Build Status](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_apis/build/status/Apparatus.Blazor.State-ASP.NET%20Core-CI?branchName=master)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/latest?definitionId=19&branchName=master)  [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/Perpetuum-mobile/Apparatus.Blazor.State/19?compact_message&failed_label=failed&passed_label=passed&skipped_label=skipped)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/results?buildId=764&view=ms.vss-test-web.build-test-results-tab) [![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/Perpetuum-mobile/Apparatus.Blazor.State/19)](https://dev.azure.com/Perpetuum-mobile/Apparatus.Blazor.State/_build/results?buildId=764&view=codecoverage-tab)
 
 # Getting Started #
 
@@ -78,5 +78,19 @@ __7. Implement Action Handler__
 ```
 
 In this way you can keep your states separated from logic and components/pages.
+
+# Subscribe to Action without creating Handler #
+
+Subscribe from Blazor component.
+```	
+ @code {
+   [Inject] IActionSubscriber ActionSubscriber { get; set; }
+	ActionSubscriber.Subscribe<MyAction>((action) => { ... });
+ }
+
+```	
+
+
 For more complex use cases please check SampleApp available in the [repository](https://github.com/Inaccessible1/Apparatus.Blazor.State). 
+
 

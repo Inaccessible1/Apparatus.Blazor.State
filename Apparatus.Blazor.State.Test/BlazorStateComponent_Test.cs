@@ -13,7 +13,7 @@ namespace Apparatus.Blazor.State.Test
         public class MyBlazorComponent : BlazorStateComponent { }
 
         [Fact]
-        public void GetState_Test()
+        public void GetState__When_State_Is_Resolved_Test()
         {
             //Setup
             var fixture = new Fixture();
@@ -31,6 +31,28 @@ namespace Apparatus.Blazor.State.Test
 
             //Assert
             mockSubscriptionService.Verify(mock => mock.Add(state.GetType(), renderedComponent.Instance), Times.Once);
+        }
+
+        [Fact]
+        public void GetState__When_State_Cannot_Be_Resolved_Test()
+        {
+            //Setup
+            var fixture = new Fixture();
+            var state = fixture.Create<MyState>();
+
+            var mockSubscriptionService = new Mock<ISubscriptionService>();
+
+            using var ctx = new TestContext();
+            //ctx.Services.AddSingleton(state);
+            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+
+            //Act
+            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>();
+            var myState = renderedComponent.Instance.GetState<MyState>();
+
+            //Assert
+            Assert.NotNull(myState);
+            mockSubscriptionService.Verify(mock => mock.Add(state.GetType(), renderedComponent.Instance), Times.Never);
         }
 
         [Fact]
