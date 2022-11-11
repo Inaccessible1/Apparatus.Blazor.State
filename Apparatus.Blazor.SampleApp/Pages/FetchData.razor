@@ -1,5 +1,6 @@
 ﻿@page "/fetchdata"
 @using Apparatus.Blazor.SampleApp.Actions
+@using Apparatus.Blazor.SampleApp.Components.ConfirmationModal.Actions.Open;
 @using Apparatus.Blazor.SampleApp.States
 @using Apparatus.Blazor.State
 @using Apparatus.Blazor.State.Contracts
@@ -21,7 +22,11 @@ else
 {
     if (State.Forecasts.Any())
     {
-
+       
+        <button type="button" class="btn btn-sm btn-link link-success" @onclick="() => OnReloadClick()">
+            <iconify-icon icon="oi:reload"></iconify-icon>
+            Reload
+        </button>
         <table class="table">
             <thead>
                 <tr>
@@ -29,6 +34,7 @@ else
                     <th>Temp. (C)</th>
                     <th>Temp. (F)</th>
                     <th>Summary</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +45,11 @@ else
                         <td>@forecast.TemperatureC</td>
                         <td>@forecast.TemperatureF</td>
                         <td>@forecast.Summary</td>
+                        <td class="text-nowrap">
+                            <button type="button" class="btn btn-sm btn-link link-danger" @onclick="() => OnRemoveClick(forecast.Date)">
+                                Remove
+                            </button>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -58,9 +69,25 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if(!State.Initialized)
+        if (!State.Initialized)
         {
             await Dispatcher.Dispatch(new LoadWeatherForecast());
         }
+    }
+
+    private Task OnRemoveClick(DateTime date)
+    {
+        var modalAction = new OpenConfirmationModel()
+            {
+                Content = "Confirm delition",
+                DispatchOnConfirmation = new RemoveTableRow() { Date = date }
+            };
+
+        return Dispatcher.Dispatch(modalAction);
+    }
+
+    private async Task OnReloadClick()
+    {
+        await Dispatcher.Dispatch(new LoadWeatherForecast());
     }
 }
