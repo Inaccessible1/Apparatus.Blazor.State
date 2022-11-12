@@ -12,7 +12,7 @@
 		<Description>Apparatus.Blazor.State is library which provides centralized state management for Blazor webassembly based implementations. </Description>
 		<!--<PackageReleaseNotes>First release</PackageReleaseNotes>-->
 		<Copyright>Copyright $([System.DateTime]::Now.ToString("yyyy")). All rights reserved.</Copyright>
-		<PackageTags>Apparatus Apparatus.Blazor.State Blazor Webassembly State-Management Blazor-Webassembly dotnet asp-net-core</PackageTags>
+		<PackageTags>Apparatus Apparatus.Blazor.State Blazor Webassembly State-Management Blazor-Webassembly dotnet asp-net-core wasm</PackageTags>
 		<!--<ApplicationIcon>icon.png</ApplicationIcon>-->
 		<StartupObject />
 		<PackageIcon>icon.png</PackageIcon>
