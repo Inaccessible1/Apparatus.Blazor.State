@@ -1,10 +1,10 @@
-﻿using Apparatus.Blazor.SampleApp.Actions;
+﻿using Apparatus.Blazor.SampleApp.Pages.Actions;
 using Apparatus.Blazor.SampleApp.States;
 using Apparatus.Blazor.State.Contracts;
 using System.Net.Http.Json;
 
 
-namespace Apparatus.Blazor.SampleApp.Handlers
+namespace Apparatus.Blazor.SampleApp.Pages.Handlers
 {
     public class LoadWeatherForecastHandler : IActionHandler<LoadWeatherForecast>
     {
