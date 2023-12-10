@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Apparatus.Blazor.State" Version="2.0.1" />
+		<PackageReference Include="Apparatus.Blazor.State" Version="2.1.11" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
 	</ItemGroup>
