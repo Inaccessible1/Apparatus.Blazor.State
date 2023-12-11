@@ -39,7 +39,7 @@ namespace Apparatus.Blazor.State
             IEnumerable<StateSubscription> subscriptions = blazorStateComponentReferencesList.Where(record => record.StateType == stateType);
             foreach (StateSubscription subscription in subscriptions.ToList())
             {
-                if (subscription.BlazorStateComponentReference.TryGetTarget(out IBlazorStateComponent component))
+                if (subscription.BlazorStateComponentReference.TryGetTarget(out IBlazorStateComponent? component))
                     component.ReRender();
 
                 else
