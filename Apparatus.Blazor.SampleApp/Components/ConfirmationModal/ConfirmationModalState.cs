@@ -1,5 +1,6 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 
+#nullable disable annotations
 namespace Apparatus.Blazor.SampleApp.Components.ConfirmationModal
 {
     public class ConfirmationModalState : IState

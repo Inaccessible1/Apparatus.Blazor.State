@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable disable annotations
 namespace Apparatus.Blazor.State
 {
     public class ActionDispatcher : IActionDispatcher

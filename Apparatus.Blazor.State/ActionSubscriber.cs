@@ -32,11 +32,11 @@ namespace Apparatus.Blazor.State
         public void Subscribe<TAction>(Action<TAction> delegete) where TAction : IAction
         {
             var actionType = typeof(TAction);
-            var id = $"{delegete?.Target?.GetType().FullName}_{delegete.Target.GetHashCode()}";
+            var id = $"{delegete?.Target?.GetType().FullName}_{delegete?.Target?.GetHashCode()}";
 
             var newAction = new ActionSubscription<TAction>(actionType, delegete, id);
 
-            IList actionSubList;
+            IList? actionSubList;
             if (!subscriptions.TryGetValue(actionType, out actionSubList))
             {
                 actionSubList = new List<ActionSubscription<TAction>>();

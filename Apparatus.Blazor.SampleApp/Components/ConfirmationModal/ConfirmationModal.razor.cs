@@ -2,6 +2,7 @@
 using Apparatus.Blazor.State.Contracts;
 using Microsoft.AspNetCore.Components;
 
+#nullable disable annotations
 namespace Apparatus.Blazor.SampleApp.Components.ConfirmationModal
 {
     public partial class ConfirmationModal

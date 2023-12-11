@@ -65,6 +65,7 @@ else
 
     WeatherForecastTableState State => GetState<WeatherForecastTableState>();
 
+#nullable disable annotations
     [Inject] IActionDispatcher Dispatcher { get; set; }
 
     protected override async Task OnInitializedAsync()
