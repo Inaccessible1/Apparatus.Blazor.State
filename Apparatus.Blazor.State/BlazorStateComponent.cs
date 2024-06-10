@@ -15,9 +15,9 @@ namespace Apparatus.Blazor.State
         public BlazorStateComponent()
         {
             string name = GetType().Name;
-            int count = 0;
+            string id = Guid.NewGuid().ToString();
 
-            Id = $"{name}-{count}";
+            Id = $"{name}-{id}";
         }
 
         [Inject] IServiceProvider ServiceProvider { get; set; }
