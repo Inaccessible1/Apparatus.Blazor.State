@@ -23,9 +23,9 @@ namespace Apparatus.Blazor.State
             return services;
         }
 
-        private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly asssembly)
+        private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly assembly)
         {
-            return services.AddServicesByMarkerInterface<TMarker>(new Assembly[] { asssembly });
+            return services.AddServicesByMarkerInterface<TMarker>([assembly]);
         }
 
         //private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services)
@@ -33,10 +33,10 @@ namespace Apparatus.Blazor.State
         //    return services.AddServicesByMarkerInterface<TMarker>(typeof(TMarker).Assembly);
         //}
 
-        public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly[] asssemblies)
         {
-            services.AddGenericTypeServices(assembly, typeof(IActionHandler<>));
-            services.AddServicesByMarkerInterface<IState>(assembly);
+            services.AddGenericTypeServices(asssemblies, typeof(IActionHandler<>));
+            services.AddServicesByMarkerInterface<IState>(asssemblies);
             services.AddScoped<IActionDispatcher, ActionDispatcher>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<IActionSubscriber, ActionSubscriber>();
@@ -45,9 +45,14 @@ namespace Apparatus.Blazor.State
             return services;
         }
 
-        private static IServiceCollection AddGenericTypeServices(this IServiceCollection services, Assembly assembly, Type genericServiceInterfaceType)
+        public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly assembly)
         {
-            var implementations = assembly.GetTypes()
+            return services.AddStateManagement([assembly]);
+        }
+
+        private static IServiceCollection AddGenericTypeServices(this IServiceCollection services, Assembly[] asssemblies, Type genericServiceInterfaceType)
+        {
+            var implementations = asssemblies.SelectMany(a => a.GetTypes())
                 .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericServiceInterfaceType)
             );
 
