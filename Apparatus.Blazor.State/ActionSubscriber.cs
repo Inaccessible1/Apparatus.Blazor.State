@@ -24,7 +24,8 @@ namespace Apparatus.Blazor.State
 
                 foreach (ActionSubscription<TAction> actionSub in actionSubList)
                 {
-                    actionSub.Delegate(action);
+                    if (actionSub.Delegate != null)
+                        actionSub.Delegate(action);
                 }
             }
         }
