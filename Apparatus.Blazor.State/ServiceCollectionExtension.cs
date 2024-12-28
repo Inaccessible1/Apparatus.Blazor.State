@@ -10,7 +10,7 @@ namespace Apparatus.Blazor.State
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtension
     {
-        private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] asssemblies)
+        public static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] asssemblies)
         {
             var interfaceType = typeof(TMarker);
 
@@ -45,7 +45,6 @@ namespace Apparatus.Blazor.State
             return services;
         }
 
-
         private static IServiceCollection AddGenericTypeServices(this IServiceCollection services, Assembly assembly, Type genericServiceInterfaceType)
         {
             var implementations = assembly.GetTypes()
@@ -62,5 +61,4 @@ namespace Apparatus.Blazor.State
             return services;
         }
     }
-
 }
