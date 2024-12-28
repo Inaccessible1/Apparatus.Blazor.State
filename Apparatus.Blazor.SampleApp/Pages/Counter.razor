@@ -3,27 +3,40 @@
 @using Apparatus.Blazor.SampleApp.States
 @using Apparatus.Blazor.State
 @using Apparatus.Blazor.State.Contracts
-@inherits BlazorStateComponent
+@* @inherits BlazorStateComponent *@
 
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
 
-<p role="status">Current count: @State.CurrentCount</p>
+@* <p role="status">Current count: @State.CurrentCount</p> *@
+<p role="status">Current count: @count</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 
 
 @code {
+    private int count = 0;
 
-    CounterState State => GetState<CounterState>(); //State has to be accessed via GetState<T>() method, as this will also subscribe current component for re-rendering in case of any state updates.
+    /* CounterState State => GetState<CounterState>(); */ //State has to be accessed via GetState<T>() method, as this will also subscribe current component for re-rendering in case of any state updates.
 
 #nullable disable annotations
     [Inject] IActionDispatcher Dispatcher { get; set; }
+    [Inject] IActionSubscriber Subscriber { get; set; }
 
     private void IncrementCount()
     {
-        Dispatcher.Dispatch(new IncrementCount { /*IncrementBy = 2*/ });
+        Dispatcher.Dispatch(new IncrementCount { IncrementBy = 2 });
+    }
+
+    protected override void OnInitialized()
+    {
+        Subscriber.Subscribe<IncrementCount>((action) =>
+        {
+            
+            count += action.IncrementBy;
+            StateHasChanged();
+        });
     }
 }
