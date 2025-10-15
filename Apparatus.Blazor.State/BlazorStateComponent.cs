@@ -1,10 +1,5 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 #nullable disable annotations
@@ -27,7 +22,7 @@ namespace Apparatus.Blazor.State
 
         public void ReRender() => base.InvokeAsync(StateHasChanged);
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             SubscriptionService.Remove(this);
             GC.SuppressFinalize(this);
@@ -42,7 +37,7 @@ namespace Apparatus.Blazor.State
                 return state;
             }
 
-            return new TState(); 
+            return new TState();
         }
     }
 }
