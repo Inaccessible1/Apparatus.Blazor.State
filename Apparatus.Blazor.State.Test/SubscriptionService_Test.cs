@@ -2,7 +2,7 @@
 using AutoFixture;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using NSubstitute;
 
 namespace Apparatus.Blazor.State.Test
 {
@@ -20,10 +20,10 @@ namespace Apparatus.Blazor.State.Test
         public void Add_Subscription_Test__ReRender_Added_Component()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var subscriptionService = new SubscriptionService();
@@ -40,10 +40,10 @@ namespace Apparatus.Blazor.State.Test
         public void Add_Subscription_Test__Skip_Redundant_Component_For_Same_State()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Ac
             var subscriptionService = new SubscriptionService();
@@ -62,10 +62,10 @@ namespace Apparatus.Blazor.State.Test
         public void Add_Subscription_Test__ReRender_Multiple_Components()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var subscriptionService = new SubscriptionService();
@@ -87,10 +87,10 @@ namespace Apparatus.Blazor.State.Test
         public void Remove_Subscription_Test()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var subscriptionService = new SubscriptionService();

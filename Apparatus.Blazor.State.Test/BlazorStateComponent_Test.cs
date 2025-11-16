@@ -2,7 +2,7 @@
 using AutoFixture;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using NSubstitute;
 
 namespace Apparatus.Blazor.State.Test
 {
@@ -19,18 +19,18 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var state = fixture.Create<MyState>();
 
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
             ctx.Services.AddSingleton(state);
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var renderedComponent = ctx.Render<MyBlazorComponent>();
             var myState = renderedComponent.Instance.GetState<MyState>();
 
             //Assert
-            mockSubscriptionService.Verify(mock => mock.Add(state.GetType(), renderedComponent.Instance), Times.Once);
+            mockSubscriptionService.Received(1).Add(state.GetType(), renderedComponent.Instance);
         }
 
         [Fact]
@@ -40,11 +40,11 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var state = fixture.Create<MyState>();
 
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
             //ctx.Services.AddSingleton(state);
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var renderedComponent = ctx.Render<MyBlazorComponent>();
@@ -52,17 +52,17 @@ namespace Apparatus.Blazor.State.Test
 
             //Assert
             Assert.NotNull(myState);
-            mockSubscriptionService.Verify(mock => mock.Add(state.GetType(), renderedComponent.Instance), Times.Never);
+            mockSubscriptionService.DidNotReceive().Add(state.GetType(), renderedComponent.Instance);
         }
 
         [Fact]
         public void ReRender_Test()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var renderedComponent = ctx.Render<MyBlazorComponent>();
@@ -77,17 +77,17 @@ namespace Apparatus.Blazor.State.Test
         public void Dispose_Test()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             using var ctx = new BunitContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var renderedComponent = ctx.Render<MyBlazorComponent>();
             renderedComponent.Instance.Dispose();
 
             // Assert
-            mockSubscriptionService.Verify(mock => mock.Remove(It.IsAny<MyBlazorComponent>()), Times.Once);
+            mockSubscriptionService.Received(1).Remove(Arg.Any<MyBlazorComponent>());
         }
 
 

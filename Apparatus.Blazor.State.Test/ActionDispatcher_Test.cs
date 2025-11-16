@@ -1,6 +1,6 @@
 using Apparatus.Blazor.State.Contracts;
 using AutoFixture;
-using Moq;
+using NSubstitute;
 
 namespace Apparatus.Blazor.State.Test
 {
@@ -15,21 +15,21 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var action = fixture.Create<MyAction>();
 
-            var mockActionSubscriber = new Mock<IActionSubscriber>();
-            var mockActionHandler = new Mock<IActionHandler<MyAction>>();
-            var mockServiceProvider = new Mock<IServiceProvider>();
+            var mockActionSubscriber = Substitute.For<IActionSubscriber>();
+            var mockActionHandler = Substitute.For<IActionHandler<MyAction>>();
+            var mockServiceProvider = Substitute.For<IServiceProvider>();
 
             mockServiceProvider
-                .Setup(mock => mock.GetService(typeof(IActionHandler<MyAction>)))
-                .Returns(mockActionHandler.Object);
+                .GetService(typeof(IActionHandler<MyAction>))
+                .Returns(mockActionHandler);
 
             //Act
-            var dispatcher = new ActionDispatcher(mockServiceProvider.Object, mockActionSubscriber.Object);
+            var dispatcher = new ActionDispatcher(mockServiceProvider, mockActionSubscriber);
             await dispatcher.Dispatch(action);
 
             //Assert
-            mockActionHandler.Verify(mock => mock.Handle(action), Times.Once);
-            mockActionSubscriber.Verify(mock => mock.Publish(action), Times.Once);
+            await mockActionHandler.Received(1).Handle(action);
+            mockActionSubscriber.Received(1).Publish(action);
         }
 
 
@@ -40,23 +40,23 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var action = fixture.Create<MyAction>();
 
-            var mockActionSubscriber = new Mock<IActionSubscriber>();
-            var mockActionHandler = new Mock<IActionHandler<MyAction>>();
-            var mockServiceProvider = new Mock<IServiceProvider>();
+            var mockActionSubscriber = Substitute.For<IActionSubscriber>();
+            var mockActionHandler = Substitute.For<IActionHandler<MyAction>>();
+            var mockServiceProvider = Substitute.For<IServiceProvider>();
 
             mockServiceProvider
-                .Setup(mock => mock.GetService(typeof(IActionHandler<MyAction>)))
-                .Returns(mockActionHandler.Object);
+                .GetService(typeof(IActionHandler<MyAction>))
+                .Returns(mockActionHandler);
 
             //Act
-            var dispatcher = new ActionDispatcher(mockServiceProvider.Object, mockActionSubscriber.Object);
+            var dispatcher = new ActionDispatcher(mockServiceProvider, mockActionSubscriber);
             IAction iAction = action;
             await dispatcher.Dispatch(iAction);
 
 
             //Assert
-            mockActionSubscriber.Verify(mock => mock.Publish(iAction), Times.Once);
-            mockActionHandler.Verify(mock => mock.Handle(It.IsAny<MyAction>()), Times.Once);
+            mockActionSubscriber.Received(1).Publish(iAction);
+            await mockActionHandler.Received(1).Handle(Arg.Any<MyAction>());
         }
     }
 }

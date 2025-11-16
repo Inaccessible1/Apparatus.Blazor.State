@@ -1,6 +1,6 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using AutoFixture;
-using Moq;
+using NSubstitute;
 
 namespace Apparatus.Blazor.State.Test
 {
@@ -18,17 +18,17 @@ namespace Apparatus.Blazor.State.Test
             // Arrange
             var fixture = new Fixture();
             var action = fixture.Create<MyAction1>();
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate);
             actionSubscriber.Publish(action);
 
             // Assert
             Assert.NotNull(subscriptionId);
             Assert.NotEmpty(subscriptionId);
-            mockDelegate.Verify(mock => mock(action), Times.Once);
+            mockDelegate.Received(1).Invoke(action);
         }
 
         [Fact]
@@ -39,25 +39,25 @@ namespace Apparatus.Blazor.State.Test
             var action1 = fixture.Create<MyAction1>();
             var action2 = fixture.Create<MyAction2>();
 
-            var mockDelegate1 = new Mock<Action<MyAction1>>();
-            var mockDelegate2 = new Mock<Action<MyAction2>>();
-            var mockDelegate3 = new Mock<Action<MyAction1>>();
+            var mockDelegate1 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate2 = Substitute.For<Action<MyAction2>>();
+            var mockDelegate3 = Substitute.For<Action<MyAction1>>();
 
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1.Object);
-            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2.Object);
-            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate3.Object);
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2);
+            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate3);
 
             actionSubscriber.Publish(action1);
             actionSubscriber.Publish(action2);
 
             // Assert
             Assert.NotEqual(subscriptionId1, subscriptionId3); // Different GUIDs even for same delegate type
-            mockDelegate1.Verify(mock => mock(action1), Times.Once);
-            mockDelegate2.Verify(mock => mock(action2), Times.Once);
-            mockDelegate3.Verify(mock => mock(action1), Times.Once);
+            mockDelegate1.Received(1).Invoke(action1);
+            mockDelegate2.Received(1).Invoke(action2);
+            mockDelegate3.Received(1).Invoke(action1);
         }
 
         [Fact]
@@ -66,13 +66,13 @@ namespace Apparatus.Blazor.State.Test
             // Arrange
             var fixture = new Fixture();
             var action = fixture.Create<MyAction1>();
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
             // Act - Each subscribe call now creates a unique subscription
-            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate.Object);
-            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate.Object);
-            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate);
+            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate);
 
             actionSubscriber.Publish(action);
 
@@ -80,7 +80,7 @@ namespace Apparatus.Blazor.State.Test
             Assert.NotEqual(subscriptionId1, subscriptionId2);
             Assert.NotEqual(subscriptionId2, subscriptionId3);
             // Each subscription invokes the delegate, so 3 times total
-            mockDelegate.Verify(mock => mock(action), Times.Exactly(3));
+            mockDelegate.Received(3).Invoke(action);
         }
 
         [Fact]
@@ -92,30 +92,30 @@ namespace Apparatus.Blazor.State.Test
             var action2 = fixture.Create<MyAction2>();
             var action3 = fixture.Create<MyAction3>();
 
-            var mockDelegate1 = new Mock<Action<MyAction1>>();
-            var mockDelegate2 = new Mock<Action<MyAction2>>();
-            var mockDelegate3 = new Mock<Action<MyAction3>>();
+            var mockDelegate1 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate2 = Substitute.For<Action<MyAction2>>();
+            var mockDelegate3 = Substitute.For<Action<MyAction3>>();
 
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            actionSubscriber.Subscribe(mockDelegate1.Object);
-            actionSubscriber.Subscribe(mockDelegate2.Object);
-            actionSubscriber.Subscribe(mockDelegate3.Object);
+            actionSubscriber.Subscribe(mockDelegate1);
+            actionSubscriber.Subscribe(mockDelegate2);
+            actionSubscriber.Subscribe(mockDelegate3);
 
             actionSubscriber.Publish(action1);
             actionSubscriber.Publish(action2);
             actionSubscriber.Publish(action3);
 
             // Assert
-            mockDelegate1.Verify(mock => mock(action1), Times.Once);
-            mockDelegate1.Verify(mock => mock(It.IsAny<MyAction1>()), Times.Once);
+            mockDelegate1.Received(1).Invoke(action1);
+            mockDelegate1.Received(1).Invoke(Arg.Any<MyAction1>());
 
-            mockDelegate2.Verify(mock => mock(action2), Times.Once);
-            mockDelegate2.Verify(mock => mock(It.IsAny<MyAction2>()), Times.Once);
+            mockDelegate2.Received(1).Invoke(action2);
+            mockDelegate2.Received(1).Invoke(Arg.Any<MyAction2>());
 
-            mockDelegate3.Verify(mock => mock(action3), Times.Once);
-            mockDelegate3.Verify(mock => mock(It.IsAny<MyAction3>()), Times.Once);
+            mockDelegate3.Received(1).Invoke(action3);
+            mockDelegate3.Received(1).Invoke(Arg.Any<MyAction3>());
         }
 
         #endregion
@@ -142,23 +142,23 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var action = fixture.Create<MyAction1>();
 
-            var mockDelegate1 = new Mock<Action<MyAction1>>();
-            var mockDelegate2 = new Mock<Action<MyAction1>>();
-            var mockDelegate3 = new Mock<Action<MyAction1>>();
+            var mockDelegate1 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate2 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate3 = Substitute.For<Action<MyAction1>>();
 
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            actionSubscriber.Subscribe(mockDelegate1.Object);
-            actionSubscriber.Subscribe(mockDelegate2.Object);
-            actionSubscriber.Subscribe(mockDelegate3.Object);
+            actionSubscriber.Subscribe(mockDelegate1);
+            actionSubscriber.Subscribe(mockDelegate2);
+            actionSubscriber.Subscribe(mockDelegate3);
 
             actionSubscriber.Publish(action);
 
             // Assert
-            mockDelegate1.Verify(mock => mock(action), Times.Once);
-            mockDelegate2.Verify(mock => mock(action), Times.Once);
-            mockDelegate3.Verify(mock => mock(action), Times.Once);
+            mockDelegate1.Received(1).Invoke(action);
+            mockDelegate2.Received(1).Invoke(action);
+            mockDelegate3.Received(1).Invoke(action);
         }
 
         [Fact]
@@ -170,20 +170,20 @@ namespace Apparatus.Blazor.State.Test
             var action2 = fixture.Create<MyAction1>();
             var action3 = fixture.Create<MyAction1>();
 
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            actionSubscriber.Subscribe(mockDelegate.Object);
+            actionSubscriber.Subscribe(mockDelegate);
             actionSubscriber.Publish(action1);
             actionSubscriber.Publish(action2);
             actionSubscriber.Publish(action3);
 
             // Assert
-            mockDelegate.Verify(mock => mock(action1), Times.Once);
-            mockDelegate.Verify(mock => mock(action2), Times.Once);
-            mockDelegate.Verify(mock => mock(action3), Times.Once);
-            mockDelegate.Verify(mock => mock(It.IsAny<MyAction1>()), Times.Exactly(3));
+            mockDelegate.Received(1).Invoke(action1);
+            mockDelegate.Received(1).Invoke(action2);
+            mockDelegate.Received(1).Invoke(action3);
+            mockDelegate.Received(3).Invoke(Arg.Any<MyAction1>());
         }
 
         [Fact]
@@ -193,25 +193,25 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var action = fixture.Create<MyAction1>();
 
-            var mockDelegate1 = new Mock<Action<MyAction1>>();
-            var mockDelegate2 = new Mock<Action<MyAction1>>();
-            var mockDelegate3 = new Mock<Action<MyAction1>>();
+            var mockDelegate1 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate2 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate3 = Substitute.For<Action<MyAction1>>();
 
-            mockDelegate2.Setup(x => x(It.IsAny<MyAction1>())).Throws<InvalidOperationException>();
+            mockDelegate2.When(x => x(Arg.Any<MyAction1>())).Do(x => throw new InvalidOperationException());
 
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            actionSubscriber.Subscribe(mockDelegate1.Object);
-            actionSubscriber.Subscribe(mockDelegate2.Object);
-            actionSubscriber.Subscribe(mockDelegate3.Object);
+            actionSubscriber.Subscribe(mockDelegate1);
+            actionSubscriber.Subscribe(mockDelegate2);
+            actionSubscriber.Subscribe(mockDelegate3);
 
             var exception = Record.Exception(() => actionSubscriber.Publish(action));
 
             // Assert
             Assert.NotNull(exception);
             Assert.IsType<InvalidOperationException>(exception);
-            mockDelegate1.Verify(mock => mock(action), Times.Once);
+            mockDelegate1.Received(1).Invoke(action);
             // mockDelegate2 throws, so mockDelegate3 may or may not be called depending on iteration order
         }
 
@@ -225,16 +225,16 @@ namespace Apparatus.Blazor.State.Test
             // Arrange
             var fixture = new Fixture();
             var action = fixture.Create<MyAction1>();
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
             // Act - Capture the subscription ID returned by Subscribe
-            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate);
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId);
             actionSubscriber.Publish(action);
 
             // Assert
-            mockDelegate.Verify(mock => mock(It.IsAny<MyAction1>()), Times.Never);
+            mockDelegate.DidNotReceive().Invoke(Arg.Any<MyAction1>());
         }
 
         [Fact]
@@ -268,24 +268,24 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var action = fixture.Create<MyAction1>();
 
-            var mockDelegate1 = new Mock<Action<MyAction1>>();
-            var mockDelegate2 = new Mock<Action<MyAction1>>();
-            var mockDelegate3 = new Mock<Action<MyAction1>>();
+            var mockDelegate1 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate2 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate3 = Substitute.For<Action<MyAction1>>();
 
             var actionSubscriber = new ActionSubscriber();
 
             // Act - Capture subscription IDs
-            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1.Object);
-            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2.Object);
-            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate3.Object);
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2);
+            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate3);
 
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId2);
             actionSubscriber.Publish(action);
 
             // Assert
-            mockDelegate1.Verify(mock => mock(action), Times.Once);
-            mockDelegate2.Verify(mock => mock(It.IsAny<MyAction1>()), Times.Never);
-            mockDelegate3.Verify(mock => mock(action), Times.Once);
+            mockDelegate1.Received(1).Invoke(action);
+            mockDelegate2.DidNotReceive().Invoke(Arg.Any<MyAction1>());
+            mockDelegate3.Received(1).Invoke(action);
         }
 
         [Fact]
@@ -295,16 +295,16 @@ namespace Apparatus.Blazor.State.Test
             var fixture = new Fixture();
             var action = fixture.Create<MyAction1>();
 
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
             // Act - Capture subscription ID
-            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate);
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId);
             actionSubscriber.Publish(action);
 
             // Assert - No exception should be thrown when publishing to an action type with no subscribers
-            mockDelegate.Verify(mock => mock(It.IsAny<MyAction1>()), Times.Never);
+            mockDelegate.DidNotReceive().Invoke(Arg.Any<MyAction1>());
         }
 
         #endregion
@@ -316,17 +316,17 @@ namespace Apparatus.Blazor.State.Test
         {
             // Arrange
             var actionSubscriber = new ActionSubscriber();
-            var subscribers = new List<Mock<Action<MyAction1>>>();
+            var subscribers = new List<Action<MyAction1>>();
             var taskCount = 10;
 
             for (int i = 0; i < taskCount; i++)
             {
-                subscribers.Add(new Mock<Action<MyAction1>>());
+                subscribers.Add(Substitute.For<Action<MyAction1>>());
             }
 
             // Act
-            var tasks = subscribers.Select(mock =>
-                Task.Run(() => actionSubscriber.Subscribe(mock.Object))
+            var tasks = subscribers.Select(sub =>
+                Task.Run(() => actionSubscriber.Subscribe(sub))
             ).ToArray();
 
             Task.WaitAll(tasks);
@@ -336,9 +336,9 @@ namespace Apparatus.Blazor.State.Test
             actionSubscriber.Publish(action);
 
             // Assert - All unique subscribers should be invoked
-            foreach (var mock in subscribers)
+            foreach (var sub in subscribers)
             {
-                mock.Verify(m => m(action), Times.Once);
+                sub.Received(1).Invoke(action);
             }
         }
 
@@ -348,10 +348,10 @@ namespace Apparatus.Blazor.State.Test
             // Arrange
             var fixture = new Fixture();
             var actionSubscriber = new ActionSubscriber();
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var publishCount = 10;
 
-            actionSubscriber.Subscribe(mockDelegate.Object);
+            actionSubscriber.Subscribe(mockDelegate);
 
             // Act
             var tasks = Enumerable.Range(0, publishCount)
@@ -361,7 +361,7 @@ namespace Apparatus.Blazor.State.Test
             Task.WaitAll(tasks);
 
             // Assert
-            mockDelegate.Verify(m => m(It.IsAny<MyAction1>()), Times.Exactly(publishCount));
+            mockDelegate.Received(publishCount).Invoke(Arg.Any<MyAction1>());
         }
 
         [Fact]
@@ -369,7 +369,7 @@ namespace Apparatus.Blazor.State.Test
         {
             // Arrange
             var actionSubscriber = new ActionSubscriber();
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var iterations = 100;
             var subscriptionIds = new System.Collections.Concurrent.ConcurrentBag<string>();
 
@@ -379,7 +379,7 @@ namespace Apparatus.Blazor.State.Test
             {
                 tasks.Add(Task.Run(() => 
                 {
-                    var id = actionSubscriber.Subscribe(mockDelegate.Object);
+                    var id = actionSubscriber.Subscribe(mockDelegate);
                     subscriptionIds.Add(id);
                 }));
                 tasks.Add(Task.Run(() => 
@@ -412,19 +412,19 @@ namespace Apparatus.Blazor.State.Test
             var action1 = fixture.Create<MyAction1>();
             var action2 = fixture.Create<MyAction1>();
 
-            var mockDelegate = new Mock<Action<MyAction1>>();
+            var mockDelegate = Substitute.For<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
             // Act & Assert - Subscribe and Publish
-            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate);
             actionSubscriber.Publish(action1);
-            mockDelegate.Verify(mock => mock(action1), Times.Once);
+            mockDelegate.Received(1).Invoke(action1);
 
             // Unsubscribe and Publish again
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId);
             actionSubscriber.Publish(action2);
-            mockDelegate.Verify(mock => mock(action2), Times.Never);
-            mockDelegate.Verify(mock => mock(It.IsAny<MyAction1>()), Times.Once); // Only the first publish
+            mockDelegate.DidNotReceive().Invoke(action2);
+            mockDelegate.Received(1).Invoke(Arg.Any<MyAction1>()); // Only the first publish
         }
 
         [Fact]
@@ -435,20 +435,20 @@ namespace Apparatus.Blazor.State.Test
             var action1 = fixture.Create<MyAction1>();
             var action2 = fixture.Create<MyAction2>();
 
-            var mockDelegate1 = new Mock<Action<MyAction1>>();
-            var mockDelegate2 = new Mock<Action<MyAction2>>();
+            var mockDelegate1 = Substitute.For<Action<MyAction1>>();
+            var mockDelegate2 = Substitute.For<Action<MyAction2>>();
 
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1.Object);
-            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2.Object);
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2);
 
             actionSubscriber.Publish(action1);
             actionSubscriber.Publish(action2);
 
-            mockDelegate1.Verify(mock => mock(action1), Times.Once);
-            mockDelegate2.Verify(mock => mock(action2), Times.Once);
+            mockDelegate1.Received(1).Invoke(action1);
+            mockDelegate2.Received(1).Invoke(action2);
 
             // Unsubscribe MyAction1 and verify MyAction2 still works
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId1);
@@ -456,8 +456,8 @@ namespace Apparatus.Blazor.State.Test
             actionSubscriber.Publish(action2);
 
             // Assert
-            mockDelegate1.Verify(mock => mock(It.IsAny<MyAction1>()), Times.Once); // Only first publish
-            mockDelegate2.Verify(mock => mock(action2), Times.Exactly(2)); // Both publishes
+            mockDelegate1.Received(1).Invoke(Arg.Any<MyAction1>()); // Only first publish
+            mockDelegate2.Received(2).Invoke(action2); // Both publishes
         }
 
         #endregion

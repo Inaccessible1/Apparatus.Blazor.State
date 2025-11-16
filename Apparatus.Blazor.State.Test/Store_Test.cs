@@ -1,6 +1,6 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using AutoFixture;
-using Moq;
+using NSubstitute;
 
 namespace Apparatus.Blazor.State.Test
 {
@@ -16,15 +16,15 @@ namespace Apparatus.Blazor.State.Test
             var oldState = fixture.Create<MyState>();
             var newState = fixture.Create<MyState>();
 
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             //Act
-            var store = new Store<MyState>(oldState, mockSubscriptionService.Object) { };
+            var store = new Store<MyState>(oldState, mockSubscriptionService) { };
             await store.SetState(newState);
 
             //Assert
             Assert.Equal(newState, store.State);
-            mockSubscriptionService.Verify(mock => mock.ReRenderSubscribers<MyState>(), Times.Once);
+            mockSubscriptionService.Received(1).ReRenderSubscribers<MyState>();
         }
 
         [Fact]
@@ -35,15 +35,15 @@ namespace Apparatus.Blazor.State.Test
             var oldState = fixture.Create<MyState>();
             var newState = fixture.Create<MyState>();
 
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
             //Act
-            var store = new Store<MyState>(oldState, mockSubscriptionService.Object) { };
+            var store = new Store<MyState>(oldState, mockSubscriptionService) { };
             await store.Refresh();
 
             //Assert
             Assert.Equal(oldState, store.State);
-            mockSubscriptionService.Verify(mock => mock.ReRenderSubscribers<MyState>(), Times.Once);
+            mockSubscriptionService.Received(1).ReRenderSubscribers<MyState>();
         }
     }
 }
