@@ -21,7 +21,6 @@
 		<RepositoryUrl>https://github.com/Inaccessible1/Apparatus.Blazor.State.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-
 	</PropertyGroup>
 
 	<ItemGroup>

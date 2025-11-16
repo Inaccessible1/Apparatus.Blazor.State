@@ -1,5 +1,6 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable enable
 namespace Apparatus.Blazor.State
@@ -28,6 +29,7 @@ namespace Apparatus.Blazor.State
     {
         private static int _instanceCount = 0;
 
+        [ExcludeFromCodeCoverage]
         public BlazorStateComponent()
         {
             string name = GetType().Name;
@@ -36,10 +38,12 @@ namespace Apparatus.Blazor.State
             Id = $"{name}-{instanceId}";
         }
 
-        [Inject] 
+        [Inject]
+        [ExcludeFromCodeCoverage]
         public IServiceProvider ServiceProvider { get; set; } = default!;
         
-        [Inject] 
+        [Inject]
+        [ExcludeFromCodeCoverage]
         public ISubscriptionService SubscriptionService { get; set; } = default!;
 
         /// <summary>
@@ -55,6 +59,7 @@ namespace Apparatus.Blazor.State
         /// <summary>
         /// Disposes this component and removes it from all state subscriptions.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public virtual void Dispose()
         {
             SubscriptionService?.Remove(this);

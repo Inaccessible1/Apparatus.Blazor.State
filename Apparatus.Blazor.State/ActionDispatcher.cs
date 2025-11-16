@@ -1,5 +1,6 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 #nullable enable
@@ -12,6 +13,7 @@ namespace Apparatus.Blazor.State
         private readonly ILogger<ActionDispatcher>? _logger;
         private static readonly MethodInfo? _cachedGenericDispatchMethod;
 
+        [ExcludeFromCodeCoverage]
         static ActionDispatcher()
         {
             // Cache the generic Dispatch method at startup to avoid reflection overhead

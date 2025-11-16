@@ -1,12 +1,14 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Apparatus.Blazor.State
 {
+    [ExcludeFromCodeCoverage]
     internal readonly struct StateSubscription
     {
         public WeakReference<IBlazorStateComponent> BlazorStateComponentReference { get; }
