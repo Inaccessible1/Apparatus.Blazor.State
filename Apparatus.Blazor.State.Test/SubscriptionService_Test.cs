@@ -22,7 +22,7 @@ namespace Apparatus.Blazor.State.Test
             //Setup
             var mockSubscriptionService = new Mock<ISubscriptionService>();
 
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Act
@@ -42,7 +42,7 @@ namespace Apparatus.Blazor.State.Test
             //Setup
             var mockSubscriptionService = new Mock<ISubscriptionService>();
 
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Ac
@@ -64,7 +64,7 @@ namespace Apparatus.Blazor.State.Test
             //Setup
             var mockSubscriptionService = new Mock<ISubscriptionService>();
 
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Act
@@ -89,7 +89,7 @@ namespace Apparatus.Blazor.State.Test
             //Setup
             var mockSubscriptionService = new Mock<ISubscriptionService>();
 
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Act
