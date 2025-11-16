@@ -1,8 +1,7 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using Microsoft.AspNetCore.Components;
 
-
-#nullable disable annotations
+#nullable enable
 namespace Apparatus.Blazor.State
 {
     /// <summary>
@@ -37,8 +36,11 @@ namespace Apparatus.Blazor.State
             Id = $"{name}-{instanceId}";
         }
 
-        [Inject] IServiceProvider ServiceProvider { get; set; }
-        [Inject] ISubscriptionService SubscriptionService { get; set; }
+        [Inject] 
+        public IServiceProvider ServiceProvider { get; set; } = default!;
+        
+        [Inject] 
+        public ISubscriptionService SubscriptionService { get; set; } = default!;
 
         /// <summary>
         /// Gets the unique identifier of this component instance.

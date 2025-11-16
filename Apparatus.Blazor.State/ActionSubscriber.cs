@@ -19,10 +19,9 @@ namespace Apparatus.Blazor.State
 
             lock (_lock)
             {
-                if (_subscriptions.ContainsKey(actionType))
+                if (_subscriptions.TryGetValue(actionType, out IList? value))
                 {
-                    var actionSubList = new List<ActionSubscription<TAction>>(
-                        _subscriptions[actionType].Cast<ActionSubscription<TAction>>());
+                    var actionSubList = new List<ActionSubscription<TAction>>(value.Cast<ActionSubscription<TAction>>());
 
                     foreach (var actionSub in actionSubList)
                     {
@@ -32,10 +31,15 @@ namespace Apparatus.Blazor.State
             }
         }
 
-        public void Subscribe<TAction>(Action<TAction> @delegate) where TAction : IAction
+        public string Subscribe<TAction>(Action<TAction> @delegate) where TAction : IAction
         {
+            if (@delegate == null)
+            {
+                throw new ArgumentNullException(nameof(@delegate));
+            }
+
             var actionType = typeof(TAction);
-            var id = $"{@delegate?.Target?.GetType().FullName}_{@delegate?.Target?.GetHashCode()}";
+            var id = $"{@delegate.Target?.GetType().FullName}_{@delegate.Target?.GetHashCode()}_{Guid.NewGuid():N}";
 
             var newAction = new ActionSubscription<TAction>(actionType, @delegate, id);
 
@@ -43,20 +47,22 @@ namespace Apparatus.Blazor.State
             {
                 if (!_subscriptions.TryGetValue(actionType, out IList? actionSubList))
                 {
-                    actionSubList = new List<ActionSubscription<TAction>>();
-                    actionSubList.Add(newAction);
+                    actionSubList = new List<ActionSubscription<TAction>>
+                    {
+                        newAction
+                    };
                     _subscriptions.Add(actionType, actionSubList);
                 }
                 else
                 {
-                    var asl = actionSubList as List<ActionSubscription<TAction>>;
-
-                    if (asl != null && !asl.Any(li => li.Id == id))
+                    if (actionSubList is List<ActionSubscription<TAction>> asl)
                     {
                         asl.Add(newAction);
                     }
                 }
             }
+
+            return id;
         }
 
         /// <summary>
@@ -66,14 +72,18 @@ namespace Apparatus.Blazor.State
         /// <param name="subscriptionId">The subscription identifier.</param>
         public void Unsubscribe<TAction>(string subscriptionId) where TAction : IAction
         {
+            if (string.IsNullOrEmpty(subscriptionId))
+            {
+                throw new ArgumentException("Subscription ID cannot be null or empty", nameof(subscriptionId));
+            }
+
             var actionType = typeof(TAction);
 
             lock (_lock)
             {
                 if (_subscriptions.TryGetValue(actionType, out IList? actionSubList))
                 {
-                    var asl = actionSubList as List<ActionSubscription<TAction>>;
-                    if (asl != null)
+                    if (actionSubList is List<ActionSubscription<TAction>> asl)
                     {
                         var subscription = asl.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription.Id != null)

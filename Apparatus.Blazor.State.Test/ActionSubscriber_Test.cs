@@ -22,10 +22,12 @@ namespace Apparatus.Blazor.State.Test
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
             actionSubscriber.Publish(action);
 
             // Assert
+            Assert.NotNull(subscriptionId);
+            Assert.NotEmpty(subscriptionId);
             mockDelegate.Verify(mock => mock(action), Times.Once);
         }
 
@@ -44,21 +46,22 @@ namespace Apparatus.Blazor.State.Test
             var actionSubscriber = new ActionSubscriber();
 
             // Act
-            actionSubscriber.Subscribe(mockDelegate1.Object);
-            actionSubscriber.Subscribe(mockDelegate2.Object);
-            actionSubscriber.Subscribe(mockDelegate3.Object);
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1.Object);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2.Object);
+            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate3.Object);
 
             actionSubscriber.Publish(action1);
             actionSubscriber.Publish(action2);
 
             // Assert
+            Assert.NotEqual(subscriptionId1, subscriptionId3); // Different GUIDs even for same delegate type
             mockDelegate1.Verify(mock => mock(action1), Times.Once);
             mockDelegate2.Verify(mock => mock(action2), Times.Once);
             mockDelegate3.Verify(mock => mock(action1), Times.Once);
         }
 
         [Fact]
-        public void Subscribe_WhenCalledWithDuplicateSubscriber_ShouldIgnoreDuplicateAndInvokeOnce()
+        public void Subscribe_WhenCalledWithSameDelegate_ShouldAddEachSubscriptionSeparately()
         {
             // Arrange
             var fixture = new Fixture();
@@ -66,15 +69,18 @@ namespace Apparatus.Blazor.State.Test
             var mockDelegate = new Mock<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
-            // Act
-            actionSubscriber.Subscribe(mockDelegate.Object);
-            actionSubscriber.Subscribe(mockDelegate.Object);
-            actionSubscriber.Subscribe(mockDelegate.Object);
+            // Act - Each subscribe call now creates a unique subscription
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate.Object);
 
             actionSubscriber.Publish(action);
 
             // Assert
-            mockDelegate.Verify(mock => mock(action), Times.Once);
+            Assert.NotEqual(subscriptionId1, subscriptionId2);
+            Assert.NotEqual(subscriptionId2, subscriptionId3);
+            // Each subscription invokes the delegate, so 3 times total
+            mockDelegate.Verify(mock => mock(action), Times.Exactly(3));
         }
 
         [Fact]
@@ -222,10 +228,8 @@ namespace Apparatus.Blazor.State.Test
             var mockDelegate = new Mock<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
-            var subscriptionId = $"{mockDelegate.Object?.Target?.GetType().FullName}_{mockDelegate.Object?.Target?.GetHashCode()}";
-
-            // Act
-            actionSubscriber.Subscribe(mockDelegate.Object);
+            // Act - Capture the subscription ID returned by Subscribe
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId);
             actionSubscriber.Publish(action);
 
@@ -270,12 +274,10 @@ namespace Apparatus.Blazor.State.Test
 
             var actionSubscriber = new ActionSubscriber();
 
-            var subscriptionId2 = $"{mockDelegate2.Object?.Target?.GetType().FullName}_{mockDelegate2.Object?.Target?.GetHashCode()}";
-
-            // Act
-            actionSubscriber.Subscribe(mockDelegate1.Object);
-            actionSubscriber.Subscribe(mockDelegate2.Object);
-            actionSubscriber.Subscribe(mockDelegate3.Object);
+            // Act - Capture subscription IDs
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1.Object);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2.Object);
+            var subscriptionId3 = actionSubscriber.Subscribe(mockDelegate3.Object);
 
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId2);
             actionSubscriber.Publish(action);
@@ -296,10 +298,8 @@ namespace Apparatus.Blazor.State.Test
             var mockDelegate = new Mock<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
-            var subscriptionId = $"{mockDelegate.Object?.Target?.GetType().FullName}_{mockDelegate.Object?.Target?.GetHashCode()}";
-
-            // Act
-            actionSubscriber.Subscribe(mockDelegate.Object);
+            // Act - Capture subscription ID
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
             actionSubscriber.Unsubscribe<MyAction1>(subscriptionId);
             actionSubscriber.Publish(action);
 
@@ -370,15 +370,25 @@ namespace Apparatus.Blazor.State.Test
             // Arrange
             var actionSubscriber = new ActionSubscriber();
             var mockDelegate = new Mock<Action<MyAction1>>();
-            var subscriptionId = $"{mockDelegate.Object?.Target?.GetType().FullName}_{mockDelegate.Object?.Target?.GetHashCode()}";
             var iterations = 100;
+            var subscriptionIds = new System.Collections.Concurrent.ConcurrentBag<string>();
 
             // Act
             var tasks = new List<Task>();
             for (int i = 0; i < iterations; i++)
             {
-                tasks.Add(Task.Run(() => actionSubscriber.Subscribe(mockDelegate.Object)));
-                tasks.Add(Task.Run(() => actionSubscriber.Unsubscribe<MyAction1>(subscriptionId)));
+                tasks.Add(Task.Run(() => 
+                {
+                    var id = actionSubscriber.Subscribe(mockDelegate.Object);
+                    subscriptionIds.Add(id);
+                }));
+                tasks.Add(Task.Run(() => 
+                {
+                    if (subscriptionIds.TryTake(out var id))
+                    {
+                        actionSubscriber.Unsubscribe<MyAction1>(id);
+                    }
+                }));
             }
 
             Task.WaitAll(tasks.ToArray());
@@ -405,10 +415,8 @@ namespace Apparatus.Blazor.State.Test
             var mockDelegate = new Mock<Action<MyAction1>>();
             var actionSubscriber = new ActionSubscriber();
 
-            var subscriptionId = $"{mockDelegate.Object?.Target?.GetType().FullName}_{mockDelegate.Object?.Target?.GetHashCode()}";
-
             // Act & Assert - Subscribe and Publish
-            actionSubscriber.Subscribe(mockDelegate.Object);
+            var subscriptionId = actionSubscriber.Subscribe(mockDelegate.Object);
             actionSubscriber.Publish(action1);
             mockDelegate.Verify(mock => mock(action1), Times.Once);
 
@@ -432,11 +440,9 @@ namespace Apparatus.Blazor.State.Test
 
             var actionSubscriber = new ActionSubscriber();
 
-            var subscriptionId1 = $"{mockDelegate1.Object?.Target?.GetType().FullName}_{mockDelegate1.Object?.Target?.GetHashCode()}";
-
             // Act
-            actionSubscriber.Subscribe(mockDelegate1.Object);
-            actionSubscriber.Subscribe(mockDelegate2.Object);
+            var subscriptionId1 = actionSubscriber.Subscribe(mockDelegate1.Object);
+            var subscriptionId2 = actionSubscriber.Subscribe(mockDelegate2.Object);
 
             actionSubscriber.Publish(action1);
             actionSubscriber.Publish(action2);

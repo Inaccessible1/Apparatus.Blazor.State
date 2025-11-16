@@ -5,6 +5,7 @@ namespace Apparatus.Blazor.State
     internal class SubscriptionService : ISubscriptionService
     {
         private readonly List<StateSubscription> blazorStateComponentReferencesList;
+        private readonly object _lock = new();
 
         public SubscriptionService()
         {
@@ -13,27 +14,40 @@ namespace Apparatus.Blazor.State
 
         public void Add(Type stateType, IBlazorStateComponent blazorStateComponent)
         {
-            if (!blazorStateComponentReferencesList.Any(subscription => subscription.StateType == stateType && subscription.ComponentId == blazorStateComponent.Id))
+            lock (_lock)
             {
-                var subscription = new StateSubscription(
-                  stateType,
-                  blazorStateComponent.Id,
-                  new WeakReference<IBlazorStateComponent>(blazorStateComponent));
+                if (!blazorStateComponentReferencesList.Any(subscription => subscription.StateType == stateType && subscription.ComponentId == blazorStateComponent.Id))
+                {
+                    var subscription = new StateSubscription(
+                      stateType,
+                      blazorStateComponent.Id,
+                      new WeakReference<IBlazorStateComponent>(blazorStateComponent));
 
-                blazorStateComponentReferencesList.Add(subscription);
+                    blazorStateComponentReferencesList.Add(subscription);
+                }
             }
         }
 
         public void Remove(IBlazorStateComponent blazorStateComponent)
         {
-            blazorStateComponentReferencesList.RemoveAll(item => item.ComponentId == blazorStateComponent.Id);
+            lock (_lock)
+            {
+                blazorStateComponentReferencesList.RemoveAll(item => item.ComponentId == blazorStateComponent.Id);
+            }
         }
 
         public void ReRenderSubscribers(Type stateType)
         {
-            var subscriptions = blazorStateComponentReferencesList
-                .Where(record => record.StateType == stateType)
-                .ToList();
+            List<StateSubscription> subscriptions;
+            
+            lock (_lock)
+            {
+                subscriptions = blazorStateComponentReferencesList
+                    .Where(record => record.StateType == stateType)
+                    .ToList();
+            }
+
+            var subscriptionsToRemove = new List<StateSubscription>();
 
             foreach (StateSubscription subscription in subscriptions)
             {
@@ -43,7 +57,19 @@ namespace Apparatus.Blazor.State
                 }
                 else
                 {
-                    blazorStateComponentReferencesList.Remove(subscription);
+                    subscriptionsToRemove.Add(subscription);
+                }
+            }
+
+            // Clean up dead references
+            if (subscriptionsToRemove.Count > 0)
+            {
+                lock (_lock)
+                {
+                    foreach (var subscription in subscriptionsToRemove)
+                    {
+                        blazorStateComponentReferencesList.Remove(subscription);
+                    }
                 }
             }
         }

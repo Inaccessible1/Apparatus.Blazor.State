@@ -14,7 +14,8 @@ namespace Apparatus.Blazor.State.Contracts
         /// </summary>
         /// <typeparam name="TAction">The action type.</typeparam>
         /// <param name="handler">The handler to invoke when the action is published.</param>
-        void Subscribe<TAction>(Action<TAction> handler) where TAction : IAction;
+        /// <returns>A subscription identifier that can be used to unsubscribe later.</returns>
+        string Subscribe<TAction>(Action<TAction> handler) where TAction : IAction;
 
         /// <summary>
         /// Unsubscribes a handler from a specific action subscription.
