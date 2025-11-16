@@ -1,65 +1,93 @@
 ﻿using Apparatus.Blazor.State.Contracts;
 using System.Collections;
-using System.Runtime.CompilerServices;
 
 namespace Apparatus.Blazor.State
 {
     internal class ActionSubscriber : IActionSubscriber
     {
-        private Dictionary<Type, IList> subscriptions;
+        private readonly Dictionary<Type, IList> _subscriptions;
+        private readonly object _lock = new();
 
         public ActionSubscriber()
         {
-            subscriptions = new Dictionary<Type, IList>();
+            _subscriptions = new Dictionary<Type, IList>();
         }
 
         public void Publish<TAction>(TAction action) where TAction : IAction
         {
             var actionType = typeof(TAction);
 
-            IList actionSubList;
-            if (subscriptions.ContainsKey(actionType))
+            lock (_lock)
             {
-                actionSubList = new List<ActionSubscription<TAction>>(subscriptions[actionType].Cast<ActionSubscription<TAction>>());
-
-                foreach (ActionSubscription<TAction> actionSub in actionSubList)
+                if (_subscriptions.ContainsKey(actionType))
                 {
-                    if (actionSub.Delegate != null)
-                        actionSub.Delegate(action);
+                    var actionSubList = new List<ActionSubscription<TAction>>(
+                        _subscriptions[actionType].Cast<ActionSubscription<TAction>>());
+
+                    foreach (var actionSub in actionSubList)
+                    {
+                        actionSub.Delegate?.Invoke(action);
+                    }
                 }
             }
         }
 
-        public void Subscribe<TAction>(Action<TAction> delegete) where TAction : IAction
+        public void Subscribe<TAction>(Action<TAction> @delegate) where TAction : IAction
         {
             var actionType = typeof(TAction);
-            var id = $"{delegete?.Target?.GetType().FullName}_{delegete?.Target?.GetHashCode()}";
+            var id = $"{@delegate?.Target?.GetType().FullName}_{@delegate?.Target?.GetHashCode()}";
 
-            var newAction = new ActionSubscription<TAction>(actionType, delegete, id);
+            var newAction = new ActionSubscription<TAction>(actionType, @delegate, id);
 
-            IList? actionSubList;
-            if (!subscriptions.TryGetValue(actionType, out actionSubList))
+            lock (_lock)
             {
-                actionSubList = new List<ActionSubscription<TAction>>();
-                actionSubList.Add(newAction);
-                subscriptions.Add(actionType, actionSubList);
-            }
-            else
-            {
-                var asl = actionSubList as List<ActionSubscription<TAction>>;
+                if (!_subscriptions.TryGetValue(actionType, out IList? actionSubList))
+                {
+                    actionSubList = new List<ActionSubscription<TAction>>();
+                    actionSubList.Add(newAction);
+                    _subscriptions.Add(actionType, actionSubList);
+                }
+                else
+                {
+                    var asl = actionSubList as List<ActionSubscription<TAction>>;
 
-                if (asl != null && !asl.Any(li => li.Id == id))
-                    asl.Add(newAction);
+                    if (asl != null && !asl.Any(li => li.Id == id))
+                    {
+                        asl.Add(newAction);
+                    }
+                }
             }
         }
 
-        //public void UnSbscribe<TMessageType>(Subscription<TMessageType> subscriptions)
-        //{
-        //    Type t = typeof(TMessageType);
-        //    if (subscriber.ContainsKey(t))
-        //    {
-        //        subscriber[t].Remove(subscription);
-        //    }
-        //}
+        /// <summary>
+        /// Unsubscribes a specific action subscription.
+        /// </summary>
+        /// <typeparam name="TAction">The action type.</typeparam>
+        /// <param name="subscriptionId">The subscription identifier.</param>
+        public void Unsubscribe<TAction>(string subscriptionId) where TAction : IAction
+        {
+            var actionType = typeof(TAction);
+
+            lock (_lock)
+            {
+                if (_subscriptions.TryGetValue(actionType, out IList? actionSubList))
+                {
+                    var asl = actionSubList as List<ActionSubscription<TAction>>;
+                    if (asl != null)
+                    {
+                        var subscription = asl.FirstOrDefault(s => s.Id == subscriptionId);
+                        if (subscription.Id != null)
+                        {
+                            asl.Remove(subscription);
+
+                            if (asl.Count == 0)
+                            {
+                                _subscriptions.Remove(actionType);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

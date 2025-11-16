@@ -19,6 +19,7 @@ namespace Apparatus.Blazor.State
         public Task SetState(TState state)
         {
             _state = state;
+            State = state;
 
             return Refresh();
         }
@@ -27,7 +28,7 @@ namespace Apparatus.Blazor.State
         {
             _subscriptionService.ReRenderSubscribers<TState>();
 
-            return Task.Delay(1);
+            return Task.CompletedTask;
         }
     }
 }

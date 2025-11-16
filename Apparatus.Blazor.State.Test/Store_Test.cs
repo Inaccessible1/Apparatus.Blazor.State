@@ -23,7 +23,7 @@ namespace Apparatus.Blazor.State.Test
             await store.SetState(newState);
 
             //Assert
-            Assert.Equal(oldState, store.State);
+            Assert.Equal(newState, store.State);
             mockSubscriptionService.Verify(mock => mock.ReRenderSubscribers<MyState>(), Times.Once);
         }
 

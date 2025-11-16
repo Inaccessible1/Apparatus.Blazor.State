@@ -36,14 +36,20 @@ namespace Apparatus.Blazor.State
 
         public void ReRenderSubscribers(Type stateType)
         {
-            IEnumerable<StateSubscription> subscriptions = blazorStateComponentReferencesList.Where(record => record.StateType == stateType);
-            foreach (StateSubscription subscription in subscriptions.ToList())
+            var subscriptions = blazorStateComponentReferencesList
+                .Where(record => record.StateType == stateType)
+                .ToList();
+
+            foreach (StateSubscription subscription in subscriptions)
             {
                 if (subscription.BlazorStateComponentReference.TryGetTarget(out IBlazorStateComponent? component))
+                {
                     component.ReRender();
-
+                }
                 else
+                {
                     blazorStateComponentReferencesList.Remove(subscription);
+                }
             }
         }
 

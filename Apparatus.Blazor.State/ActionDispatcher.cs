@@ -10,7 +10,6 @@ namespace Apparatus.Blazor.State
 {
     public class ActionDispatcher : IActionDispatcher
     {
-
         private readonly IServiceProvider _serviceProvider;
         private readonly IActionSubscriber _actionSubscriber;
 
@@ -22,34 +21,28 @@ namespace Apparatus.Blazor.State
 
         public async Task Dispatch<TAction>(TAction action) where TAction : IAction
         {
+            // Publish action to subscribers first
+            _actionSubscriber.Publish(action);
+
+            // Then handle if a handler exists
             if (_serviceProvider.GetService(typeof(IActionHandler<TAction>)) is IActionHandler<TAction> handler)
             {
                 await handler.Handle(action);
-
-                await Task.Delay(1);
             }
-
-            _actionSubscriber.Publish(action);
-
-            await Task.Delay(1);
         }
 
         public async Task Dispatch(IAction action)
         {
-            _actionSubscriber.Publish(action);
-            await Task.Delay(1);
-
+            // Delegate to generic version for consistency
             var actionType = action.GetType();
-            var handlerType = typeof(IActionHandler<>).MakeGenericType(actionType);
+            var genericDispatchMethod = typeof(ActionDispatcher)
+                .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                .Where(m => m.Name == nameof(Dispatch) && m.IsGenericMethod && m.GetGenericArguments().Length == 1)
+                .FirstOrDefault()
+                ?.MakeGenericMethod(actionType)
+                ?? throw new InvalidOperationException($"Cannot find generic Dispatch method for action type {actionType.Name}");
 
-            if (handlerType != null)
-            {
-                dynamic handler = _serviceProvider.GetService(handlerType);
-
-                if (handler != null)
-                    await handler.Handle((dynamic)action);
-                
-            }
+            await (Task)genericDispatchMethod.Invoke(this, [action])!;
         }
     }
 }
