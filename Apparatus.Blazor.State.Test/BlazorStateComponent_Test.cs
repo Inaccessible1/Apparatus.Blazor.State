@@ -21,12 +21,12 @@ namespace Apparatus.Blazor.State.Test
 
             var mockSubscriptionService = new Mock<ISubscriptionService>();
 
-            using var ctx = new TestContext();
+            using var ctx = new BunitContext();
             ctx.Services.AddSingleton(state);
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Act
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>();
+            var renderedComponent = ctx.Render<MyBlazorComponent>();
             var myState = renderedComponent.Instance.GetState<MyState>();
 
             //Assert
@@ -47,7 +47,7 @@ namespace Apparatus.Blazor.State.Test
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Act
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>();
+            var renderedComponent = ctx.Render<MyBlazorComponent>();
             var myState = renderedComponent.Instance.GetState<MyState>();
 
             //Assert
@@ -65,7 +65,7 @@ namespace Apparatus.Blazor.State.Test
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Act
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>();
+            var renderedComponent = ctx.Render<MyBlazorComponent>();
             renderedComponent.Instance.ReRender();
 
             //Assert
@@ -83,7 +83,7 @@ namespace Apparatus.Blazor.State.Test
             ctx.Services.AddSingleton(mockSubscriptionService.Object);
 
             //Act
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>();
+            var renderedComponent = ctx.Render<MyBlazorComponent>();
             renderedComponent.Instance.Dispose();
 
             // Assert

@@ -28,7 +28,7 @@ namespace Apparatus.Blazor.State.Test
             //Act
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>(); //First render
+            var renderedComponent = ctx.Render<MyBlazorComponent>(); //First render
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
             subscriptionService.ReRenderSubscribers<MyState>(); //Second render
 
@@ -48,7 +48,7 @@ namespace Apparatus.Blazor.State.Test
             //Ac
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>(); //First render
+            var renderedComponent = ctx.Render<MyBlazorComponent>(); //First render
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
 
@@ -70,8 +70,8 @@ namespace Apparatus.Blazor.State.Test
             //Act
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent1 = ctx.RenderComponent<MyBlazorComponent1>(); //First render
-            var renderedComponent2 = ctx.RenderComponent<MyBlazorComponent2>(); //First render
+            var renderedComponent1 = ctx.Render<MyBlazorComponent1>(); //First render
+            var renderedComponent2 = ctx.Render<MyBlazorComponent2>(); //First render
 
             subscriptionService.Add(typeof(MyState), renderedComponent1.Instance);
             subscriptionService.Add(typeof(MyState), renderedComponent2.Instance);
@@ -95,7 +95,7 @@ namespace Apparatus.Blazor.State.Test
             //Act
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>(); //First render
+            var renderedComponent = ctx.Render<MyBlazorComponent>(); //First render
 
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
             subscriptionService.Remove(renderedComponent.Instance);
