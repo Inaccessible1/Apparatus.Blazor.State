@@ -36,7 +36,36 @@ namespace Apparatus.Blazor.State
         }
 
         /// <summary>
+        /// Registers all implementations of a marker interface as scoped services.
+        /// Use this for state objects that should be isolated per user/circuit in Blazor Server.
+        /// </summary>
+        /// <typeparam name="TMarker">The marker interface type.</typeparam>
+        /// <param name="services">The service collection.</param>
+        /// <param name="assemblies">The assemblies to scan for implementations.</param>
+        /// <returns>The service collection for chaining.</returns>
+        public static IServiceCollection AddScopedServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] assemblies)
+        {
+            var interfaceType = typeof(TMarker);
+
+            var implementingServices = assemblies.SelectMany(s => s.GetTypes())
+                .Where(x => interfaceType.IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
+
+            foreach (var service in implementingServices)
+            {
+                services.AddScoped(service);
+            }
+
+            return services;
+        }
+
+        private static IServiceCollection AddScopedServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly assembly)
+        {
+            return services.AddScopedServicesByMarkerInterface<TMarker>([assembly]);
+        }
+
+        /// <summary>
         /// Registers all state and action handler services required for state management.
+        /// State objects (IState) are registered as scoped to ensure isolation per user/circuit in Blazor Server.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="assemblies">The assemblies to scan for states and handlers.</param>
@@ -44,7 +73,8 @@ namespace Apparatus.Blazor.State
         public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly[] assemblies)
         {
             services.AddGenericTypeServices(assemblies, typeof(IActionHandler<>));
-            services.AddServicesByMarkerInterface<IState>(assemblies);
+            // Register IState implementations as Scoped to ensure each user/circuit has isolated state
+            services.AddScopedServicesByMarkerInterface<IState>(assemblies);
             services.AddScoped<IActionDispatcher, ActionDispatcher>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<IActionSubscriber, ActionSubscriber>();
