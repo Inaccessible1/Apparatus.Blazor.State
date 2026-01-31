@@ -5,11 +5,11 @@ namespace Apparatus.Blazor.State
     internal class SubscriptionService : ISubscriptionService
     {
         private readonly List<StateSubscription> blazorStateComponentReferencesList;
-        private readonly object _lock = new();
+        private readonly Lock _lock = new();
 
         public SubscriptionService()
         {
-            blazorStateComponentReferencesList = new List<StateSubscription>();
+            blazorStateComponentReferencesList = [];
         }
 
         public void Add(Type stateType, IBlazorStateComponent blazorStateComponent)
@@ -42,9 +42,7 @@ namespace Apparatus.Blazor.State
             
             lock (_lock)
             {
-                subscriptions = blazorStateComponentReferencesList
-                    .Where(record => record.StateType == stateType)
-                    .ToList();
+                subscriptions = [.. blazorStateComponentReferencesList.Where(record => record.StateType == stateType)];
             }
 
             var subscriptionsToRemove = new List<StateSubscription>();
