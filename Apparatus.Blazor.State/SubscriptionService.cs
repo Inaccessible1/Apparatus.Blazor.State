@@ -1,49 +1,74 @@
 ﻿using Apparatus.Blazor.State.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Apparatus.Blazor.State
 {
     internal class SubscriptionService : ISubscriptionService
     {
         private readonly List<StateSubscription> blazorStateComponentReferencesList;
+        private readonly Lock _lock = new();
 
         public SubscriptionService()
         {
-            blazorStateComponentReferencesList = new List<StateSubscription>();
+            blazorStateComponentReferencesList = [];
         }
 
         public void Add(Type stateType, IBlazorStateComponent blazorStateComponent)
         {
-            if (!blazorStateComponentReferencesList.Any(subscription => subscription.StateType == stateType && subscription.ComponentId == blazorStateComponent.Id))
+            lock (_lock)
             {
-                var subscription = new StateSubscription(
-                  stateType,
-                  blazorStateComponent.Id,
-                  new WeakReference<IBlazorStateComponent>(blazorStateComponent));
+                if (!blazorStateComponentReferencesList.Any(subscription => subscription.StateType == stateType && subscription.ComponentId == blazorStateComponent.Id))
+                {
+                    var subscription = new StateSubscription(
+                      stateType,
+                      blazorStateComponent.Id,
+                      new WeakReference<IBlazorStateComponent>(blazorStateComponent));
 
-                blazorStateComponentReferencesList.Add(subscription);
+                    blazorStateComponentReferencesList.Add(subscription);
+                }
             }
         }
 
         public void Remove(IBlazorStateComponent blazorStateComponent)
         {
-            blazorStateComponentReferencesList.RemoveAll(item => item.ComponentId == blazorStateComponent.Id);
+            lock (_lock)
+            {
+                blazorStateComponentReferencesList.RemoveAll(item => item.ComponentId == blazorStateComponent.Id);
+            }
         }
 
         public void ReRenderSubscribers(Type stateType)
         {
-            IEnumerable<StateSubscription> subscriptions = blazorStateComponentReferencesList.Where(record => record.StateType == stateType);
-            foreach (StateSubscription subscription in subscriptions.ToList())
+            List<StateSubscription> subscriptions;
+            
+            lock (_lock)
+            {
+                subscriptions = [.. blazorStateComponentReferencesList.Where(record => record.StateType == stateType)];
+            }
+
+            var subscriptionsToRemove = new List<StateSubscription>();
+
+            foreach (StateSubscription subscription in subscriptions)
             {
                 if (subscription.BlazorStateComponentReference.TryGetTarget(out IBlazorStateComponent? component))
+                {
                     component.ReRender();
-
+                }
                 else
-                    blazorStateComponentReferencesList.Remove(subscription);
+                {
+                    subscriptionsToRemove.Add(subscription);
+                }
+            }
+
+            // Clean up dead references
+            if (subscriptionsToRemove.Count > 0)
+            {
+                lock (_lock)
+                {
+                    foreach (var subscription in subscriptionsToRemove)
+                    {
+                        blazorStateComponentReferencesList.Remove(subscription);
+                    }
+                }
             }
         }
 

@@ -2,7 +2,7 @@
 using AutoFixture;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using NSubstitute;
 
 namespace Apparatus.Blazor.State.Test
 {
@@ -20,15 +20,15 @@ namespace Apparatus.Blazor.State.Test
         public void Add_Subscription_Test__ReRender_Added_Component()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
-            using var ctx = new TestContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            using var ctx = new BunitContext();
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>(); //First render
+            var renderedComponent = ctx.Render<MyBlazorComponent>(); //First render
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
             subscriptionService.ReRenderSubscribers<MyState>(); //Second render
 
@@ -40,15 +40,15 @@ namespace Apparatus.Blazor.State.Test
         public void Add_Subscription_Test__Skip_Redundant_Component_For_Same_State()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
-            using var ctx = new TestContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            using var ctx = new BunitContext();
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Ac
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>(); //First render
+            var renderedComponent = ctx.Render<MyBlazorComponent>(); //First render
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
 
@@ -62,16 +62,16 @@ namespace Apparatus.Blazor.State.Test
         public void Add_Subscription_Test__ReRender_Multiple_Components()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
-            using var ctx = new TestContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            using var ctx = new BunitContext();
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent1 = ctx.RenderComponent<MyBlazorComponent1>(); //First render
-            var renderedComponent2 = ctx.RenderComponent<MyBlazorComponent2>(); //First render
+            var renderedComponent1 = ctx.Render<MyBlazorComponent1>(); //First render
+            var renderedComponent2 = ctx.Render<MyBlazorComponent2>(); //First render
 
             subscriptionService.Add(typeof(MyState), renderedComponent1.Instance);
             subscriptionService.Add(typeof(MyState), renderedComponent2.Instance);
@@ -87,15 +87,15 @@ namespace Apparatus.Blazor.State.Test
         public void Remove_Subscription_Test()
         {
             //Setup
-            var mockSubscriptionService = new Mock<ISubscriptionService>();
+            var mockSubscriptionService = Substitute.For<ISubscriptionService>();
 
-            using var ctx = new TestContext();
-            ctx.Services.AddSingleton(mockSubscriptionService.Object);
+            using var ctx = new BunitContext();
+            ctx.Services.AddSingleton(mockSubscriptionService);
 
             //Act
             var subscriptionService = new SubscriptionService();
 
-            var renderedComponent = ctx.RenderComponent<MyBlazorComponent>(); //First render
+            var renderedComponent = ctx.Render<MyBlazorComponent>(); //First render
 
             subscriptionService.Add(typeof(MyState), renderedComponent.Instance);
             subscriptionService.Remove(renderedComponent.Instance);

@@ -1,6 +1,4 @@
-﻿
-
-using Apparatus.Blazor.State.Contracts;
+﻿using Apparatus.Blazor.State.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -10,15 +8,24 @@ namespace Apparatus.Blazor.State
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtension
     {
-        public static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] asssemblies)
+        /// <summary>
+        /// Registers all implementations of a marker interface as singleton services.
+        /// </summary>
+        /// <typeparam name="TMarker">The marker interface type.</typeparam>
+        /// <param name="services">The service collection.</param>
+        /// <param name="assemblies">The assemblies to scan for implementations.</param>
+        /// <returns>The service collection for chaining.</returns>
+        public static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] assemblies)
         {
             var interfaceType = typeof(TMarker);
 
-            var _services = asssemblies.SelectMany(s => s.GetTypes())
-           .Where(x => interfaceType.IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
+            var implementingServices = assemblies.SelectMany(s => s.GetTypes())
+                .Where(x => interfaceType.IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
 
-            foreach (var serivce in _services)
-                services.AddSingleton(serivce);
+            foreach (var service in implementingServices)
+            {
+                services.AddSingleton(service);
+            }
 
             return services;
         }
@@ -28,15 +35,46 @@ namespace Apparatus.Blazor.State
             return services.AddServicesByMarkerInterface<TMarker>([assembly]);
         }
 
-        //private static IServiceCollection AddServicesByMarkerInterface<TMarker>(this IServiceCollection services)
-        //{
-        //    return services.AddServicesByMarkerInterface<TMarker>(typeof(TMarker).Assembly);
-        //}
-
-        public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly[] asssemblies)
+        /// <summary>
+        /// Registers all implementations of a marker interface as scoped services.
+        /// Use this for state objects that should be isolated per user/circuit in Blazor Server.
+        /// </summary>
+        /// <typeparam name="TMarker">The marker interface type.</typeparam>
+        /// <param name="services">The service collection.</param>
+        /// <param name="assemblies">The assemblies to scan for implementations.</param>
+        /// <returns>The service collection for chaining.</returns>
+        public static IServiceCollection AddScopedServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly[] assemblies)
         {
-            services.AddGenericTypeServices(asssemblies, typeof(IActionHandler<>));
-            services.AddServicesByMarkerInterface<IState>(asssemblies);
+            var interfaceType = typeof(TMarker);
+
+            var implementingServices = assemblies.SelectMany(s => s.GetTypes())
+                .Where(x => interfaceType.IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
+
+            foreach (var service in implementingServices)
+            {
+                services.AddScoped(service);
+            }
+
+            return services;
+        }
+
+        private static IServiceCollection AddScopedServicesByMarkerInterface<TMarker>(this IServiceCollection services, Assembly assembly)
+        {
+            return services.AddScopedServicesByMarkerInterface<TMarker>([assembly]);
+        }
+
+        /// <summary>
+        /// Registers all state and action handler services required for state management.
+        /// State objects (IState) are registered as scoped to ensure isolation per user/circuit in Blazor Server.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="assemblies">The assemblies to scan for states and handlers.</param>
+        /// <returns>The service collection for chaining.</returns>
+        public static IServiceCollection AddStateManagement(this IServiceCollection services, Assembly[] assemblies)
+        {
+            services.AddGenericTypeServices(assemblies, typeof(IActionHandler<>));
+            // Register IState implementations as Scoped to ensure each user/circuit has isolated state
+            services.AddScopedServicesByMarkerInterface<IState>(assemblies);
             services.AddScoped<IActionDispatcher, ActionDispatcher>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<IActionSubscriber, ActionSubscriber>();
@@ -50,11 +88,10 @@ namespace Apparatus.Blazor.State
             return services.AddStateManagement([assembly]);
         }
 
-        private static IServiceCollection AddGenericTypeServices(this IServiceCollection services, Assembly[] asssemblies, Type genericServiceInterfaceType)
+        private static IServiceCollection AddGenericTypeServices(this IServiceCollection services, Assembly[] assemblies, Type genericServiceInterfaceType)
         {
-            var implementations = asssemblies.SelectMany(a => a.GetTypes())
-                .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericServiceInterfaceType)
-            );
+            var implementations = assemblies.SelectMany(a => a.GetTypes())
+                .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericServiceInterfaceType));
 
             foreach (var implementation in implementations)
             {
